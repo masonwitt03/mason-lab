@@ -1,0 +1,55 @@
+# Copy to config.yaml. Secrets go in .env, not here.
+database: data/mason_lab.db
+dry_run: false            # true = agents research + alert but never download/upload anything
+daily_digest_hour: 9      # local hour to send the daily briefing (null to disable)
+
+notify:
+  console:  {enabled: true}
+  ntfy:     {enabled: true, min_priority: 3}   # phone push: only high/urgent (1 low .. 4 urgent)
+  discord:  {enabled: false}                   # full feed
+  telegram: {enabled: false, min_priority: 2}
+
+agents:
+  crypto:
+    enabled: true
+    interval_minutes: 5
+    alert_cooldown_hours: 6
+    chains: [solana, base, ethereum, bsc]
+    min_score: 55              # 0-100 momentum score
+    min_liquidity_usd: 20000
+    min_volume_h1_usd: 25000
+    use_rugcheck: true         # Solana contract risk check
+    hide_flagged: false        # true = only alert on coins with zero red flags
+    bankroll_usd: 500          # money you've set aside for this and can afford to lose
+    risk_per_trade_pct: 2      # max % of bankroll you lose if the stop hits
+    stop_loss_pct: 30
+    max_alerts_per_run: 5
+    coingecko_trending: true
+    watchlist: []              # e.g. ["solana:<mint address>"]
+
+  x_watch:
+    enabled: false             # needs X_BEARER_TOKEN
+    interval_minutes: 2
+    accounts: []               # handles you want watched for coin posts, e.g. [someone, someone_else]
+
+  etsy:
+    enabled: true
+    interval_minutes: 1440     # once a day
+    top_n: 5
+    # seed_keywords: [...]     # defaults to a list of proven inventory-free niches
+
+  clipper:
+    enabled: true
+    interval_minutes: 180
+    language: en
+    lookback_hours: 24
+    min_views: 500
+    max_clips_per_streamer: 2
+    output_dir: data/clips
+    upload_youtube: false      # flip on once YT_* creds are set
+    youtube_privacy: public
+    upload_tiktok: false       # sends to your TikTok inbox as drafts
+    # Only streamers who've approved you clipping them (clip program, Discord clipper role, or
+    # written OK). Anyone else only shows up in the "top streamers" scouting report.
+    streamers:
+      # - {login: somestreamer, permission: true, hashtags: [somestreamer, twitch, fyp]}
