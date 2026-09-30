@@ -1,0 +1,39 @@
+{
+  "name": "gameday_black_gold",
+  "template": "gameday",
+  "palette": "black_gold",
+  "text": {
+    "main": "GAME",
+    "sub": "DAY",
+    "tag": "SATURDAYS"
+  },
+  "keywords": [
+    "game day shirt",
+    "football shirt",
+    "game day tee",
+    "football season",
+    "tailgate shirt",
+    "black and gold shirt"
+  ],
+  "personalizable": false,
+  "listing": {
+    "title": "Game Day Saturdays | Game Day Shirt | Football Shirt | Game Day Tee | Vintage Style Tee | Retro Varsity Shirt",
+    "tags": [
+      "game day shirt",
+      "football shirt",
+      "game day tee",
+      "football season",
+      "tailgate shirt",
+      "black and gold shirt",
+      "vintage style tee",
+      "retro shirt",
+      "varsity shirt",
+      "college style tee",
+      "oversized tee",
+      "comfort colors",
+      "gift for him"
+    ],
+    "description": "Game Day Saturdays - a vintage-inspired varsity tee with a worn-in print look.\n\n- Soft, garment-dyed style tee, relaxed fit (size up for oversized)\n- Printed to order just for you by our production partner\n- The distressed texture is part of the design\n- Colorway: Black And Gold\n\nCare: wash inside out, cold, hang dry to keep the print looking great.",
+    "personalizable": false
+  }
+}

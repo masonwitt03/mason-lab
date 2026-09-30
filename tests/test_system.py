@@ -1,6 +1,5 @@
 import time
 
-import pytest
 
 from mason_lab.agents.base import Agent, AgentContext
 from mason_lab.agents.clipper import ClipperAgent, caption_for, pick_clips

@@ -1,5 +1,7 @@
 # Mason Lab
 
+> **New to this? Start with [GUIDE.md](GUIDE.md)**: a step-by-step beginner guide with every command.
+
 One central controller that runs five agents and pushes their findings to your phone.
 
 ```
@@ -40,6 +42,20 @@ python -m mason_lab vintage listing 3            # reprint listing copy
 It detects school (and adds the mascot, since buyers search both), brand, decade, size, type, events like "national champions", single stitch, and flaws. Anything it misses can be passed as a flag (`--school`, `--decade`, `--size`...). Suggested prices are a starting point; once you've logged sales, the weekly report shows what actually sells.
 
 Resell **authentic** vintage only. Licensed shirts are legal to resell, but printing new shirts with college logos is trademark infringement and gets listings pulled and accounts banned.
+
+## Shirt designs (print-on-demand)
+
+`shirts/` holds 18 ready-to-sell original designs (see `shirts/PREVIEW.jpg`): Game Day tees in 10 team-color pairs, personalized "Property of ___ Athletic Dept." tees, and varsity social-club tees. Each has a 300 DPI transparent `print.png`, a `mockup.jpg` and Etsy listing copy in `design.json`.
+
+```bash
+python -m mason_lab shirts options                                   # layouts + color palettes
+python -m mason_lab shirts collection --surname JOHNSON --town NASHVILLE
+python -m mason_lab shirts make my_tee --template arch --palette cream_on_navy --top NASHVILLE --main ATHLETICS --est "EST. 1806"
+python -m mason_lab shirts printify-setup                            # find shop / shirt / printer ids
+python -m mason_lab shirts upload gameday_red_black                  # creates a Printify draft -> Publish to Etsy
+```
+
+College names and brands are blocked: printing them without a license is trademark infringement.
 
 The Etsy agent is still included as a second option for print-on-demand or digital products (`agents.etsy.enabled: true`).
 

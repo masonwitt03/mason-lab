@@ -2,3 +2,4 @@ requests>=2.31
 PyYAML>=6.0
 # clipping pipeline (system tools): ffmpeg, and `pip install yt-dlp`
 yt-dlp>=2024.1.1
+Pillow>=10.0

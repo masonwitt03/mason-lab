@@ -9,6 +9,16 @@ notify:
   discord:  {enabled: false}                   # full feed
   telegram: {enabled: false, min_priority: 2}
 
+designs:                     # print-on-demand shirt designs
+  output_dir: data/designs
+  wear: 0.22                 # how worn/vintage the print looks (0 = clean, 0.4 = very worn)
+  # font: fonts/display.ttf  # optional: a varsity font you downloaded (see GUIDE.md)
+  # sans_font: fonts/sans.ttf
+  price: 29.99               # Etsy price for S-XL (2XL+ adds $3)
+  printify_shop_id:          # fill these in after running: python -m mason_lab shirts printify-setup
+  printify_blueprint_id:
+  printify_provider_id:
+
 agents:
   crypto:
     enabled: true
