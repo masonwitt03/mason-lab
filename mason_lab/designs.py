@@ -76,6 +76,8 @@ class Design:
     text: dict[str, str]
     keywords: list[str] = field(default_factory=list)  # search terms for the listing
     personalizable: bool = False
+    title: str | None = None   # Etsy title; built from the text + keywords when not set
+    wear: float | None = None  # distress amount for this design; falls back to the config value
 
 
 # --- low-level drawing -------------------------------------------------------------------------
@@ -293,7 +295,7 @@ def render(d: Design, fonts: dict | None = None, wear: float = 0.22) -> Image.Im
         raise ValueError(f"unknown palette {d.palette}; choose from {', '.join(PALETTES)}")
     check_text(*d.text.values())
     img = TEMPLATES[d.template](d, PALETTES[d.palette], fonts or {})
-    img = distress(img, wear, seed=sum(map(ord, d.name)))
+    img = distress(img, d.wear if d.wear is not None else wear, seed=sum(map(ord, d.name)))
     bbox = img.getchannel("A").getbbox()
     if bbox:
         pad = 40
@@ -303,30 +305,60 @@ def render(d: Design, fonts: dict | None = None, wear: float = 0.22) -> Image.Im
 
 
 def mockup(design_img: Image.Image, shirt_hex: str, size: int = 1600) -> Image.Image:
-    """Flat-lay tee preview for your listing photos (the print shop's own mockups are better for the main photo)."""
-    bg = Image.new("RGB", (size, size), "#e7e3dc")
-    s = size / 100
-    tee = [(33, 10), (43, 7), (50, 9), (57, 7), (67, 10), (88, 25), (79, 35), (72, 31),
-           (73, 92), (27, 92), (28, 31), (21, 35), (12, 25)]
-    shadow = Image.new("L", (size, size), 0)
-    ImageDraw.Draw(shadow).polygon([(x * s + 10, y * s + 14) for x, y in tee], fill=90)
-    bg.paste((150, 145, 138), (0, 0), shadow.filter(ImageFilter.GaussianBlur(18)))
-    d = ImageDraw.Draw(bg)
-    d.polygon([(x * s, y * s) for x, y in tee], fill=shirt_hex)
+    """Flat-lay tee preview with fabric texture and soft shading (use the print shop's photo-real
+    mockups as the main listing photo, and this as an extra)."""
+    S = size * 2  # draw at 2x, scale down for smooth edges
+    u = S / 100
+    bg = Image.new("RGB", (S, S), "#e9e5de")
+    tee = [(38, 14), (42, 16.5), (46, 18), (50, 18.5), (54, 18), (58, 16.5), (62, 14), (76, 17), (92, 32),
+           (82, 42), (74, 37), (74, 88), (26, 88), (26, 37), (18, 42), (8, 32), (24, 17)]
+    shape = Image.new("L", (S, S), 0)
+    ImageDraw.Draw(shape).polygon([(x * u, y * u) for x, y in tee], fill=255)
+    shape = shape.filter(ImageFilter.GaussianBlur(u * 0.8)).point(lambda v: 255 if v > 128 else 0)
+    shape = shape.filter(ImageFilter.GaussianBlur(1.5))
+    shadow = shape.filter(ImageFilter.GaussianBlur(u * 1.6))
+    bg.paste((160, 155, 148), (int(u * 0.6), int(u * 1.2)), shadow)
+
     r, g, b, _ = _rgba(shirt_hex)
-    collar = tuple(int(v * 0.78) for v in (r, g, b))
-    d.arc([42 * s, 2 * s, 58 * s, 13 * s], 25, 155, fill=collar, width=int(s * 1.2))
-    max_w, max_h = int(36 * s), int(36 * s)
+    fabric = Image.new("RGB", (S, S), (r, g, b))
+    # soft light from the top left, darker edges, a couple of folds, and fine cotton grain
+    light = Image.linear_gradient("L").rotate(35, expand=False).resize((S, S))
+    fabric = Image.composite(fabric, Image.new("RGB", (S, S), tuple(int(v * 0.86) for v in (r, g, b))), light)
+    folds = Image.new("L", (S, S), 0)
+    fd = ImageDraw.Draw(folds)
+    for (x0, y0, x1, y1) in ((30, 60, 44, 86), (60, 50, 70, 84), (27, 40, 36, 52)):
+        fd.line([x0 * u, y0 * u, x1 * u, y1 * u], fill=70, width=int(u * 1.2))
+    folds = folds.filter(ImageFilter.GaussianBlur(u * 1.1))
+    fabric = Image.composite(Image.new("RGB", (S, S), tuple(int(v * 0.8) for v in (r, g, b))), fabric, folds)
+    grain = Image.effect_noise((S // 2, S // 2), 18).resize((S, S))
+    fabric = Image.blend(fabric, Image.merge("RGB", (grain, grain, grain)), 0.05)
+    bg.paste(fabric, (0, 0), shape)
+
+    d = ImageDraw.Draw(bg)
+    dark = tuple(int(v * 0.72) for v in (r, g, b))
+    d.arc([38 * u, 7 * u, 62 * u, 19.5 * u], 12, 168, fill=dark, width=int(u * 1.3))  # collar rib
+    d.arc([37.2 * u, 5.5 * u, 62.8 * u, 21 * u], 15, 165, fill=tuple(int(v * 0.9) for v in (r, g, b)),
+          width=int(u * 0.5))
+    for x0, x1 in ((24, 26.5), (76, 73.5)):  # sleeve seams
+        d.line([x0 * u, 17.5 * u, x1 * u, 37 * u], fill=dark, width=int(u * 0.25))
+    d.line([18.6 * u, 41 * u, 8.8 * u, 31.4 * u], fill=dark, width=int(u * 0.25))
+    d.line([81.4 * u, 41 * u, 91.2 * u, 31.4 * u], fill=dark, width=int(u * 0.25))
+    d.line([26.5 * u, 86 * u, 73.5 * u, 86 * u], fill=dark, width=int(u * 0.25))  # hem stitch
+
     art = design_img.copy()
-    art.thumbnail((max_w, max_h), Image.LANCZOS)
-    bg.paste(art, (int(50 * s - art.width / 2), int(20 * s)), art)
-    return bg
+    art.thumbnail((int(33 * u), int(38 * u)), Image.LANCZOS)
+    a = art.getchannel("A")
+    art.putalpha(ImageChops.multiply(a, Image.new("L", a.size, 235)))  # ink sits into the fabric a bit
+    bg.paste(art, (int(50 * u - art.width / 2), int(24 * u)), art)
+    return bg.resize((size, size), Image.LANCZOS)
 
 
 # --- listing copy ------------------------------------------------------------------------------
 def listing_for(d: Design) -> dict[str, Any]:
     words = " ".join(v for v in d.text.values() if v).title()
     kw = d.keywords or []
+    if d.title:
+        return _listing(d, d.title[:140], words, kw)
     color_name = d.palette.replace("_on_", " on ").replace("_", " and ").title()
     title_parts = [words, *[k.title() for k in kw[:3]], "Vintage Style Tee", "Retro Varsity Shirt"]
     title = ""
@@ -352,6 +384,31 @@ def listing_for(d: Design) -> dict[str, Any]:
     if d.personalizable:
         desc += ["", "PERSONALIZE IT: add your name, town or year in the personalization box."]
     desc += ["", "Care: wash inside out, cold, hang dry to keep the print looking great."]
+    return {"title": title, "tags": tags[:13], "description": "\n".join(desc), "personalizable": d.personalizable}
+
+
+def _listing(d: Design, title: str, words: str, kw: list[str]) -> dict[str, Any]:
+    """Listing copy for the illustrated holiday line (Comfort Colors 1717 garment-dyed tee)."""
+    tags = []
+    for t in [*kw, "comfort colors tee", "gift for her", "trendy shirt", "oversized tee", "gift for mom",
+              "cute graphic tee", "holiday gift", "womens tee"]:
+        t = t.lower().strip()
+        if t and len(t) <= 20 and t not in tags:
+            tags.append(t)
+    desc = [
+        f"{words}: an original retro design printed on a soft, garment-dyed Comfort Colors tee.",
+        "",
+        "WHY YOU'LL LOVE IT",
+        "- Comfort Colors 1717: heavyweight 100% ring-spun cotton, broken-in feel from day one",
+        "- Relaxed unisex fit. Size up 1-2 sizes for the oversized look",
+        "- Printed to order by our production partner, so every shirt is made just for you",
+    ]
+    if d.personalizable:
+        desc += ["", "PERSONALIZATION",
+                 "- Type the name (and year, if shown) exactly as you want it printed in the personalization box",
+                 "- Ordering for the whole family? Add each size to your cart separately"]
+    desc += ["", "CARE", "- Machine wash cold, inside out. Tumble dry low or hang dry. Do not iron the print.",
+             "", "Order early for the holidays: production takes 2-5 business days plus shipping."]
     return {"title": title, "tags": tags[:13], "description": "\n".join(desc), "personalizable": d.personalizable}
 
 
@@ -407,3 +464,12 @@ def starter_collection(surname: str = "SMITH", town: str = "HOMETOWN", year: str
                ["bachelorette shirts", "bride shirt", "bridal party", "social club shirt"], True),
     ]
     return designs
+
+
+def _register_retro() -> None:
+    import importlib
+
+    importlib.import_module(".retro", __package__)  # adds the holiday templates and palettes
+
+
+_register_retro()

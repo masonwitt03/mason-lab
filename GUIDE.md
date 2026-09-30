@@ -1,21 +1,21 @@
 # Beginner's Guide: Step by Step
 
-This guide assumes you've never done any coding. Follow the steps in order.
-Every command is in a gray box. Copy it exactly, paste it, and press **Enter**.
+This guide assumes you've never done any coding. Follow the steps in order, one at a time.
+When you see a gray box, copy what's inside it exactly, paste it, and press **Enter**.
 
 **What's in here**
-- [Part 0: Set up your computer (do this first, once)](#part-0-set-up-your-computer-do-this-first-once)
-- [Part 1: Get alerts on your phone](#part-1-get-alerts-on-your-phone)
-- [Part 2: Sell the shirts I made (Etsy + Printify)](#part-2-sell-the-shirts-i-made-etsy--printify)
+- [Part 0: Set up your computer (once, about 15 minutes)](#part-0-set-up-your-computer-once-about-15-minutes)
+- [Part 1: Start it (double-click)](#part-1-start-it-double-click)
+- [Part 2: Sell the holiday shirts (Etsy + Printify)](#part-2-sell-the-holiday-shirts-etsy--printify)
 - [Part 3: Resell real vintage shirts (Depop)](#part-3-resell-real-vintage-shirts-depop)
 - [Part 4: Clipping streamers (YouTube / TikTok)](#part-4-clipping-streamers-youtube--tiktok)
 - [Part 5: Crypto alerts](#part-5-crypto-alerts)
 - [Part 6: Alerts when famous people post coins on X](#part-6-alerts-when-famous-people-post-coins-on-x)
-- [Part 7: Turn everything on](#part-7-turn-everything-on)
+- [Part 7: Keep it running](#part-7-keep-it-running)
 - [If something goes wrong](#if-something-goes-wrong)
 
-**My advice:** start with **Part 0, Part 1 and Part 2** this week. Add one more part each week.
-Don't try to set up everything in one day.
+**My advice:** do **Parts 0, 1 and 2 this week**, because the holiday shirts need to be up before Halloween.
+Add one more part each week after that.
 
 ---
 
@@ -23,266 +23,198 @@ Don't try to set up everything in one day.
 
 | Word | What it means |
 |---|---|
-| **Terminal** | A window where you type commands. On Mac it's called **Terminal**. On Windows use **PowerShell**. |
-| **Command** | A line of text you paste into the terminal and run by pressing Enter. |
-| **Folder** / **directory** | Same thing. |
-| **API key** / **token** | A password that lets this program use a website (Etsy, Twitch...) for you. Never share these. |
-| **`.env` file** | The file where your API keys go. |
-| **`config.yaml`** | The settings file (what's on or off, prices, which streamers...). |
+| **Terminal** | A window where you type commands. On Mac it's the app called **Terminal**. On Windows it's **PowerShell**. |
+| **Command** | A line of text you paste into the terminal, then press Enter to run it. |
+| **API key** / **token** | A password that lets this program use a website (Printify, Twitch...) for you. Never share these. |
+| **Settings files** | `config.yaml` (your choices) and `.env` (your passwords). The setup helper fills these in for you. |
 
 ### Mac vs Windows
 
-A few commands are different. When this guide says `python`, use the one for your computer:
-
-| | Mac | Windows |
-|---|---|---|
-| Run Python | `python3` | `python` |
-| Copy a file | `cp` | `copy` |
-
-Everything else is the same.
+When a command in this guide starts with `python3` and you're on **Windows**, type `python` instead. Everything else is the same.
 
 ---
 
-## Part 0: Set up your computer (do this first, once)
+## Part 0: Set up your computer (once, about 15 minutes)
 
 ### Step 0.1: Install Python
 
-Python is the language the program is written in.
+Python is the language the program is written in. You install it once, like any other app.
 
-- **Mac:** go to https://www.python.org/downloads/, click the big yellow **Download Python** button, open the file and click through the installer.
-- **Windows:** go to https://www.python.org/downloads/ and click **Download Python**. Open the file.
-  **Important: on the first screen, check the box "Add python.exe to PATH"**, then click **Install Now**.
+1. Go to https://www.python.org/downloads/
+2. Click the big yellow **Download Python** button.
+3. Open the file you downloaded.
+   - **Windows:** on the first screen, **check the box "Add python.exe to PATH"** at the bottom. This is important. Then click **Install Now**.
+   - **Mac:** click **Continue** / **Agree** / **Install** until it's done. When a folder opens at the end, double-click **Install Certificates.command** inside it.
 
-### Step 0.2: Install Git
+### Step 0.2: Download the project
 
-Git downloads the project from GitHub.
+1. Go to https://github.com/masonwitt03/mason-lab and log in if it asks.
+2. Near the top left there's a button that says **main** (the branch picker). Click it and choose **claude/multi-agent-ecommerce-streaming-trading-t2ib0o**.
+3. Click the green **Code** button, then **Download ZIP**.
+4. Find the ZIP in your **Downloads** folder and double-click it to unzip it. (**Windows:** right-click it and choose **Extract All**, then click **Extract**.)
+5. Move the unzipped folder somewhere easy, like your **Desktop**, and rename it to `mason-lab`.
 
-- **Mac:** open Terminal (press `Cmd + Space`, type `Terminal`, press Enter), paste this and press Enter:
-  ```
-  xcode-select --install
-  ```
-  Click **Install** in the window that pops up.
-- **Windows:** go to https://git-scm.com/download/win, download it, and click **Next** on every screen.
-
-### Step 0.3: Open the terminal
-
-- **Mac:** press `Cmd + Space`, type `Terminal`, press Enter.
-- **Windows:** click Start, type `PowerShell`, press Enter.
-
-### Step 0.4: Check that it worked
-
-Paste this and press Enter (Windows: use `python` instead of `python3`):
-```
-python3 --version
-```
-You should see something like `Python 3.12.5`. If you get an error, restart your computer and try again.
-
-### Step 0.5: Download the project
-
-Paste these one at a time, pressing Enter after each:
-```
-cd ~
-git clone https://github.com/masonwitt03/mason-lab.git
-cd mason-lab
-git checkout claude/multi-agent-ecommerce-streaming-trading-t2ib0o
-```
-If it asks you to log in to GitHub, log in with your GitHub account.
-
-> **Every time you open a new terminal later**, run `cd ~/mason-lab` first so you're in the project folder.
-
-### Step 0.6: Install the parts the program needs
-
-Mac:
-```
-python3 -m pip install -r requirements.txt
-```
-Windows:
-```
-python -m pip install -r requirements.txt
-```
-Lots of text will scroll by. That's normal. Wait until it stops.
-
-### Step 0.7: Make your settings files
-
-Mac:
-```
-cp config.example.yaml config.yaml
-cp .env.example .env
-```
-Windows:
-```
-copy config.example.yaml config.yaml
-copy .env.example .env
-```
-
-### Step 0.8: Learn how to open and edit these files
-
-You'll edit `config.yaml` and `.env` a lot. Open them in a plain text editor:
-
-- **Mac:** `open -e config.yaml` (and `open -e .env`)
-- **Windows:** `notepad config.yaml` (and `notepad .env`)
-
-Rules for editing:
-- In `.env`, put your key right after the `=` with **no spaces**. Example: `PRINTIFY_TOKEN=abc123xyz`
-- In `config.yaml`, **spacing at the start of lines matters.** Only change the value after the `:`. Don't move lines left or right.
-- Always **save** (`Cmd+S` / `Ctrl+S`) after editing.
-
-✅ **Part 0 done.**
+✅ **Part 0 done.** You won't need to repeat it.
 
 ---
 
-## Part 1: Get alerts on your phone
+## Part 1: Start it (double-click)
 
-The program sends everything (hot coins, clips, price-cut reminders) to your phone through a free app called **ntfy**.
+### Step 1.1: Get the phone app ready
 
-1. Install **ntfy** on your phone (App Store or Google Play).
-2. Open it and tap **+** (Subscribe to topic).
-3. Make up a topic name nobody could guess, like `mason-lab-k8x2q9` (anyone who knows the name can read your alerts). Type it and tap **Subscribe**.
-4. On your computer, open `.env` (see Step 0.8) and change the `NTFY_TOPIC` line to your topic:
-   ```
-   NTFY_TOPIC=mason-lab-k8x2q9
-   ```
-   Save the file.
-5. Send yourself a test alert:
-   ```
-   python3 -m mason_lab test-notify
-   ```
-   Your phone should buzz with **"Mason Lab test"**. 🎉
+1. On your phone, install **ntfy** (free, from the App Store or Google Play).
+2. Open it. Don't subscribe to anything yet. The setup helper will give you a name to type in.
+
+### Step 1.2: Double-click the start file
+
+Open your `mason-lab` folder:
+- **Mac:** double-click **Start-Mac.command**.
+  - If your Mac says it "can't be opened because it's from an unidentified developer": **right-click** the file, choose **Open**, then click **Open** again. You only do this the first time.
+- **Windows:** double-click **Start-Windows.bat**.
+  - If a blue box says "Windows protected your PC": click **More info**, then **Run anyway**.
+
+A window with text opens. The first time, it spends a minute installing what it needs, then the **setup helper** starts.
+
+### Step 1.3: Answer the setup questions
+
+The helper asks 4 questions. Type your answer and press **Enter**. To skip one for now, just press **Enter**.
+
+1. **Phone alerts:** it shows you a topic name, like `mason-lab-k8x2q9`.
+   - On your phone, in ntfy, tap **+**, type that exact name and tap **Subscribe**.
+   - Back on the computer, press **Enter** to keep that name.
+   - When it asks to send a test, type `y` and press Enter. **Your phone should buzz.** 🎉
+2. **Printify token:** press **Enter** to skip for now. You'll get it in Part 2, then run the setup again.
+3. **Crypto money:** type the most you're OK losing completely, like `200`.
+4. **Twitch:** press **Enter** to skip for now (Part 4).
+
+After the questions, it says **"Mason Lab is running."** That's it. It now works in the background and sends updates to your phone.
+
+- **To stop it:** close that window.
+- **To start it again later:** double-click the start file again. It skips the questions after the first time.
+- **To change your answers later**, open the terminal in the project folder and run the setup again (see "How to open a terminal in the project folder" below):
+  ```
+  python3 -m mason_lab setup
+  ```
+
+### How to open a terminal in the project folder
+
+You'll need this for a few commands in the next parts.
+- **Mac:** open the **Terminal** app (press `Cmd + Space`, type `Terminal`, press Enter). Type `cd ` (with a space after it), **drag your `mason-lab` folder into the Terminal window**, and press Enter.
+- **Windows:** open your `mason-lab` folder, click the address bar at the top, type `powershell` and press Enter.
 
 ✅ **Part 1 done.**
 
 ---
 
-## Part 2: Sell the shirts I made (Etsy + Printify)
+## Part 2: Sell the holiday shirts (Etsy + Printify)
 
 **How this works:** you never touch a shirt. A customer buys on Etsy, then **Printify** prints the design on a shirt and ships it to them.
-You keep the difference between your Etsy price and Printify's cost (usually about **$8 to $12 profit per shirt**).
+You keep the difference between your price and Printify's cost. With these shirts at $29.99 that's usually about **$10–13 per shirt**.
 
 ### Step 2.1: Look at the designs
 
-I already made **18 designs**. They're in the `shirts` folder.
-- `shirts/PREVIEW.jpg` shows all of them on shirts.
-- Each design has its own folder with:
-  - `print.png` = the file the printer uses (high quality, see-through background)
-  - `mockup.jpg` = a preview picture
-  - `design.json` = a ready-made Etsy title, tags and description
+Open the `shirts` folder inside `mason-lab`. **`PREVIEW.jpg`** shows all 11:
 
-To see them, open the `shirts` folder:
-- **Mac:** `open shirts`
-- **Windows:** `explorer shirts`
+| When to sell | Designs |
+|---|---|
+| **Halloween (list now, sells until about Oct 25)** | Spooky Season, Boo Crew *(personalized family name)* |
+| **Fall and Thanksgiving (Oct and Nov)** | Hey Pumpkin, Cozy Season, Thankful |
+| **Christmas (mid-Nov to mid-Dec is Etsy's busiest time)** | Merry & Bright, Holly Jolly, Family Christmas *(personalized, red or cream shirt)*, Oh Snap! gingerbread, Christmas Tree Farm |
 
-### Step 2.2: Make your own designs (optional)
+Each design has its own folder with 3 files:
+- `print.png`: the file the printer uses (high quality, see-through background)
+- `mockup.jpg`: a preview picture of the shirt
+- `design.json`: the ready-made Etsy **title**, **13 tags** and **description**. You can open it with Notepad or TextEdit.
 
-Put your own last name and hometown in:
-```
-python3 -m mason_lab shirts collection --surname JOHNSON --town NASHVILLE --year 1996
-```
-The new files go in `data/designs`.
+All of them are designed for the **Comfort Colors 1717** shirt, the soft, washed-looking tee that's trending on Etsy right now.
 
-Make a single custom design:
-```
-python3 -m mason_lab shirts make nashville_tee --template arch --palette cream_on_navy --top NASHVILLE --main ATHLETICS --est "EST. 1806"
-```
-See all the layouts and color choices:
-```
-python3 -m mason_lab shirts options
-```
-
-**The four layouts:**
-- `arch`: curved word on top, big word, "EST. year". Use `--top`, `--main` and `--est`.
-- `dept`: "PROPERTY OF / NAME / ATHLETIC DEPT.". Use `--top`, `--main` and `--sub`.
-- `gameday`: "GAME 🏈 DAY" plus a small line. Use `--main`, `--sub` and `--tag`.
-- `badge`: a round badge. Use `--top`, `--bottom` and `--main`.
-
-> ⚠️ The program **refuses** college names (Texas, Michigan...) and brands (Disney, Nike...).
-> Putting those on shirts you make is illegal without a license, and Etsy shuts down shops for it.
-> The **Game Day** shirts come in team colors with no names, so fans still buy them for their team.
-
-### Step 2.3: Open an Etsy shop
+### Step 2.2: Open an Etsy shop
 
 1. Go to https://www.etsy.com/sell and click **Get started**.
-2. Choose a shop name, and set up payments (your bank account) and billing.
+2. Choose a shop name, and set up how you get paid (your bank account) and billing.
 3. Etsy charges **$0.20 per listing**, plus about 10% when something sells.
-4. You'll need at least one listing to finish opening the shop. That listing will come from Printify in Step 2.7.
+4. Etsy wants one listing before your shop opens. That listing will come from Printify in Step 2.6.
 
-### Step 2.4: Make a Printify account and connect it to Etsy
+### Step 2.3: Make a Printify account and connect it to Etsy
 
-1. Go to https://printify.com and sign up (free).
-2. Click **Manage my stores** (top right), then **Add new store**, then **Etsy**, then **Connect**. Log in to Etsy and click **Allow access**.
+1. Go to https://printify.com and sign up (it's free).
+2. Click **Manage my stores** (top right), then **Add new store**, then **Etsy**, then **Connect**.
+3. Log in to Etsy and click **Allow access**.
 
-### Step 2.5: Get your Printify token
+### Step 2.4: Get your Printify token and give it to the program
 
-1. In Printify, click your profile (top right), then **Connections**.
+1. In Printify, click your profile picture (top right), then **Connections**.
 2. Under **API tokens**, click **Generate**. Name it `mason-lab`, choose **All scopes**, and click **Generate token**.
-3. Copy the long token. Open `.env` and paste it:
+3. **Copy** the long token.
+4. Open a terminal in the project folder (see Part 1) and run:
    ```
-   PRINTIFY_TOKEN=paste-the-long-token-here
+   python3 -m mason_lab setup
    ```
-   Save.
+   Press Enter to keep your phone answers. At the **Printify token** question, paste the token and press Enter.
+   It should say **"Connected to your shop"**.
 
-### Step 2.6: Tell the program which shop and which shirt to use
+### Step 2.5: Choose the shirt and the printer (one time)
 
-Run:
-```
-python3 -m mason_lab shirts printify-setup
-```
-You'll see lines like:
-```
-Shop: MyEtsyShop  id=12345678  (etsy)
-Shirt: Unisex Garment-Dyed T-shirt (Comfort Colors 1717)  blueprint_id=706
-```
-1. Open `config.yaml` and find the `designs:` section.
-2. Copy the shop `id` number next to `printify_shop_id:`.
-3. Copy the `blueprint_id` next to `printify_blueprint_id:`. I recommend the **Comfort Colors 1717**: it's the soft, washed-out vintage tee that sells best on Etsy right now.
-4. Save, then run the same command again:
+1. In the terminal, run:
    ```
    python3 -m mason_lab shirts printify-setup
    ```
-   Now it also lists printers (`provider_id=...`). Pick one in the US and put its number next to `printify_provider_id:`. Save.
+2. Find the line with **Comfort Colors 1717** and note its `blueprint_id` number.
+3. Open `config.yaml` (Mac: `open -e config.yaml`, Windows: `notepad config.yaml`). Find the line `printify_blueprint_id:` and type the number after it, with a space after the colon. For example: `printify_blueprint_id: 706`. Save (`Cmd+S` / `Ctrl+S`).
+4. Run the same command again:
+   ```
+   python3 -m mason_lab shirts printify-setup
+   ```
+   Now it also lists **printers**. Pick one in the United States and put its number after `printify_provider_id:` in `config.yaml`, the same way. Save.
 
-When you're done, that part of `config.yaml` should look something like this (with your own numbers):
-```
-  price: 29.99
-  printify_shop_id: 12345678
-  printify_blueprint_id: 706
-  printify_provider_id: 99
-```
+### Step 2.6: Upload the shirts
 
-### Step 2.7: Upload a design
-
-Upload the red and black Game Day shirt:
+Upload the first one:
 ```
-python3 -m mason_lab shirts upload gameday_red_black
+python3 -m mason_lab shirts upload spooky_season
 ```
-(It finds designs in both the `shirts` folder and `data/designs`, where your own designs go.)
-
 Then:
-1. Go to Printify, then **My Products**. The shirt is there as a **draft**.
-2. Click it. Check the preview pictures, and move or resize the design if you want.
-3. Click **Publish**. It now shows up on your Etsy shop. 🎉
-4. Do the same for the other designs (the names are the folder names in `shirts`).
+1. In Printify, go to **My Products**. The shirt is there as a **draft**.
+2. Click it and look at the preview photos. Drag the design up or down if you want.
+3. Click **Publish**. It now appears in your Etsy shop. 🎉
 
-To use a different price for one design:
+Do the same for the others. Replace `spooky_season` with each folder name:
 ```
-python3 -m mason_lab shirts upload coffee_club --price 32.99
+python3 -m mason_lab shirts upload boo_crew
+python3 -m mason_lab shirts upload hey_pumpkin
+python3 -m mason_lab shirts upload cozy_season
+python3 -m mason_lab shirts upload thankful
+python3 -m mason_lab shirts upload merry_and_bright
+python3 -m mason_lab shirts upload holly_jolly
+python3 -m mason_lab shirts upload family_christmas_red
+python3 -m mason_lab shirts upload family_christmas_ivory
+python3 -m mason_lab shirts upload oh_snap
+python3 -m mason_lab shirts upload christmas_tree_farm
 ```
+
+### Step 2.7: Turn on personalization (for Boo Crew and Family Christmas)
+
+In Etsy, open each of those 3 listings, click **Edit**, scroll to **Personalization**, turn it on, and type the instructions:
+`Type your family name exactly as you want it printed (and the year, if different).`
 
 ### Step 2.8: When someone orders
 
-- **Normal shirts:** Printify prints and ships them automatically. You don't do anything. (Printify charges your card for the shirt when the order comes in.)
-- **Personalized shirts** (the family name, hometown and bachelorette ones): the buyer types their name. You then:
-  1. Make their version:
+- **Normal shirts:** Printify prints and ships them automatically. You don't do anything.
+- **Personalized shirts:** read the name the buyer typed in the Etsy order (say, "Garcia"). Then:
+  1. Make their version with one command:
      ```
-     python3 -m mason_lab shirts make order_4821 --template dept --palette navy_on_ivory --main GARCIA
+     python3 -m mason_lab shirts personalize family_christmas_red --name Garcia
      ```
-  2. In Printify, open the order and swap in the new `print.png` from `data/designs/order_4821` before it goes to print.
+     It tells you where it saved the new file.
+  2. In Printify, open **Orders**, click that order, and choose **Edit**. Replace the design with the new `print.png` file, then **Save**.
+  3. Do this within a few hours of the order, before it goes to print.
 
-### Step 2.9: Tips to actually get sales
+### Step 2.9: Tips to get sales
 
-- Upload **all 10 Game Day colors** now. It's football season, and these sell until January.
-- Use the **title and tags** from each design's `design.json`. They're written for Etsy search.
-- Make your first listing photo a **Printify mockup** (they look real). Use my `mockup.jpg` as an extra photo.
-- 10 to 20 listings is a good start. More listings means more chances to show up in search.
+- **List the Halloween shirts first, today if you can.** Halloween sales stop around Oct 25.
+- Use the **title and tags** from each `design.json`. They're written for Etsy search.
+- Make your first photo a **Printify mockup** (they look like real photos). Add my `mockup.jpg` as an extra photo.
+- Around **Nov 1**, lower the Halloween listings and focus on the Christmas ones. The **Family Christmas** shirts will likely be your best sellers, because families buy several at once.
 
 ✅ **Part 2 done.**
 
@@ -369,7 +301,7 @@ The program finds each streamer's most-viewed clips from the last day, makes the
    - Client Type: **Confidential**
    Then click **Create**.
 3. Click **Manage**. Copy the **Client ID**. Click **New Secret** and copy the secret.
-4. Put both in `.env`:
+4. Easiest: run `python3 -m mason_lab setup` and paste them when it asks. Or put both in `.env` (Mac: `open -e .env`, Windows: `notepad .env`), right after the `=` with no spaces, then save:
    ```
    TWITCH_CLIENT_ID=your-client-id
    TWITCH_CLIENT_SECRET=your-secret
@@ -488,28 +420,22 @@ Max size $33 (risking $10) | stop -30% @ 0.00084 | take 1/2 at +100% @ 0.0024
 
 ---
 
-## Part 7: Turn everything on
+## Part 7: Keep it running
 
-Start the whole system:
-```
-python3 -m mason_lab run
-```
-- **Leave this window open.** The system only runs while it's open and your computer is on (and not asleep).
-- To stop it, click the window and press `Ctrl + C`.
-- Every morning at 9am you get a **daily briefing** on your phone.
+The program only works while its window is open **and** your computer is on.
 
-**Keep your computer awake:**
-- **Mac:** System Settings, then **Lock Screen**, then set "Turn display off" to **Never** (or run `caffeinate -i python3 -m mason_lab run` instead).
-- **Windows:** Settings, then **System**, then **Power**, then set "Sleep" to **Never**.
+- **Start it:** double-click **Start-Mac.command** or **Start-Windows.bat**.
+- **Stop it:** close the window.
+- **Keep your computer from sleeping:**
+  - **Mac:** the start file already keeps your Mac awake while it runs. Just keep it plugged in, with the lid open.
+  - **Windows:** Settings, then **System**, then **Power**, then set "Sleep" to **Never** (when plugged in).
+- **Every morning at 9am** you get a **daily briefing** on your phone.
 
-**Later:** to keep it running 24/7 without your computer, rent a small cloud server (about $5/month, from DigitalOcean or Hetzner) and repeat Part 0 on it.
+**Later, when it's making money:** you can run it 24/7 without your own computer by renting a small online computer (a "VPS") for about $5/month from DigitalOcean or Hetzner. Ask me when you're ready, and I'll walk you through it.
 
-### Getting updates I make to the program
+### Getting new versions I make
 
-```
-cd ~/mason-lab
-git pull
-```
+Download the ZIP again (Step 0.2) and copy your `config.yaml` and `.env` files from the old folder into the new one.
 
 ---
 
@@ -518,9 +444,9 @@ git pull
 | Problem | Fix |
 |---|---|
 | `python3: command not found` (Mac) or `python is not recognized` (Windows) | Reinstall Python (Step 0.1). On Windows, check **"Add python.exe to PATH"**. Restart the computer. |
-| `No module named ...` | Run Step 0.6 again. |
-| `config.yaml not found` | You're not in the project folder. Run `cd ~/mason-lab` first. |
-| Phone doesn't buzz | Check that `NTFY_TOPIC` in `.env` exactly matches the topic in the app, with no spaces. Run `test-notify` again. |
+| `No module named ...` | Double-click the start file again. It installs what's missing. |
+| `config.yaml not found` | Your terminal isn't in the project folder. See "How to open a terminal in the project folder" in Part 1. |
+| Phone doesn't buzz | Run `python3 -m mason_lab setup` again and make sure the topic name matches the one in the ntfy app **exactly**. |
 | `401` or `403` error | That API key is wrong or expired. Copy it again into `.env`. |
 | `yaml` error after editing `config.yaml` | You moved a line's spacing. Compare it with `config.example.yaml` and match the indentation. |
 | `agent 'x' is not enabled` | In `config.yaml`, set `enabled: true` for that part. |

@@ -12,6 +12,8 @@ Vintage inventory:
   python -m mason_lab vintage list | stats | listing 12 | delete 12
 
 Shirt designs (print-on-demand):
+  python -m mason_lab shirts holiday
+  python -m mason_lab shirts personalize family_christmas_red --name Garcia
   python -m mason_lab shirts collection --surname SMITH --town AUSTIN
   python -m mason_lab shirts make my_tee --template arch --palette cream_on_navy --top AUSTIN --main ATHLETICS --est "EST. 1839"
   python -m mason_lab shirts options
@@ -35,6 +37,7 @@ def main() -> None:
     ap.add_argument("-c", "--config", default="config.yaml")
     ap.add_argument("-v", "--verbose", action="store_true")
     sub = ap.add_subparsers(dest="cmd", required=True)
+    sub.add_parser("setup", help="answer a few questions to fill in your settings")
     sub.add_parser("run")
     one = sub.add_parser("once")
     one.add_argument("agent")
@@ -67,6 +70,13 @@ def main() -> None:
     sc.add_argument("--surname", default="SMITH")
     sc.add_argument("--town", default="HOMETOWN")
     sc.add_argument("--year", default="1994")
+    shol = sh.add_parser("holiday", help="make the illustrated holiday collection")
+    shol.add_argument("--surname", default="Smith")
+    shol.add_argument("--year", default="2026")
+    sp = sh.add_parser("personalize", help="make a customer's personalized version of a design")
+    sp.add_argument("design")
+    sp.add_argument("--name", required=True, help="the name the customer typed, e.g. Garcia")
+    sp.add_argument("--year")
     sm = sh.add_parser("make", help="make one custom design")
     sm.add_argument("name")
     sm.add_argument("--template", required=True)
@@ -86,6 +96,9 @@ def main() -> None:
     logging.basicConfig(level=logging.DEBUG if args.verbose else logging.INFO,
                         format="%(asctime)s %(levelname)s %(name)s: %(message)s")
     load_dotenv()
+    if args.cmd == "setup":
+        from .setup_wizard import run as setup
+        return setup()
     cfg = load_config(args.config)
     if args.cmd == "vintage":
         return vintage_cmd(args, cfg)
@@ -167,8 +180,29 @@ def shirts_cmd(args, cfg) -> None:
         print("  badge   = round badge, text around, big middle        (text: --top --bottom --main)")
         print("Palettes:", ", ".join(PALETTES))
         return
-    if args.scmd in ("collection", "make"):
-        if args.scmd == "collection":
+    if args.scmd == "personalize":
+        import re
+        from pathlib import Path
+        src = next((Path(b) / args.design for b in (out, "shirts") if (Path(b) / args.design / "design.json").exists()),
+                   None)
+        if not src:
+            raise SystemExit(f"no design called '{args.design}' in {out}/ or shirts/")
+        d = load(src)
+        for k, v in d.text.items():
+            v = re.sub(r"\bSmith\b", args.name.strip().title(), v)
+            v = re.sub(r"\bSMITH\b", args.name.strip().upper(), v)
+            if args.year:
+                v = re.sub(r"\b20\d\d\b", args.year, v)
+            d.text[k] = v
+        d.name = f"{args.design}_{re.sub(r'[^a-z0-9]+', '_', args.name.lower()).strip('_')}"
+        files = save(d, out, fonts, wear)
+        print(f"Made {d.name}. Upload this file to the order in Printify:\n  {files['print']}")
+        return
+    if args.scmd in ("collection", "make", "holiday"):
+        if args.scmd == "holiday":
+            from .retro import holiday_collection
+            designs = holiday_collection(args.surname, args.year)
+        elif args.scmd == "collection":
             designs = starter_collection(args.surname, args.town, args.year)
         else:
             text = {k: getattr(args, k) for k in ("top", "main", "sub", "est", "bottom", "tag") if getattr(args, k)}

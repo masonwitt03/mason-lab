@@ -45,14 +45,15 @@ Resell **authentic** vintage only. Licensed shirts are legal to resell, but prin
 
 ## Shirt designs (print-on-demand)
 
-`shirts/` holds 18 ready-to-sell original designs (see `shirts/PREVIEW.jpg`): Game Day tees in 10 team-color pairs, personalized "Property of ___ Athletic Dept." tees, and varsity social-club tees. Each has a 300 DPI transparent `print.png`, a `mockup.jpg` and Etsy listing copy in `design.json`.
+`shirts/` holds an 11-design illustrated holiday collection for Etsy's biggest season (see `shirts/PREVIEW.jpg`): Spooky Season, Boo Crew (personalized), Hey Pumpkin, Cozy Season, Thankful, Merry & Bright, Holly Jolly, Family Christmas (personalized, 2 colorways), Oh Snap! and Christmas Tree Farm, sized for Comfort Colors 1717. Each has a 300 DPI transparent `print.png`, a `mockup.jpg` and Etsy title/13 tags/description in `design.json`. Fonts in `mason_lab/fonts/` are SIL OFL (commercial use OK).
 
 ```bash
-python -m mason_lab shirts options                                   # layouts + color palettes
-python -m mason_lab shirts collection --surname JOHNSON --town NASHVILLE
-python -m mason_lab shirts make my_tee --template arch --palette cream_on_navy --top NASHVILLE --main ATHLETICS --est "EST. 1806"
+python -m mason_lab setup                                            # guided setup (also: Start-Mac.command / Start-Windows.bat)
+python -m mason_lab shirts holiday --surname Garcia --year 2026      # regenerate the collection
+python -m mason_lab shirts personalize family_christmas_red --name Garcia   # a customer's personalized print file
 python -m mason_lab shirts printify-setup                            # find shop / shirt / printer ids
-python -m mason_lab shirts upload gameday_red_black                  # creates a Printify draft -> Publish to Etsy
+python -m mason_lab shirts upload spooky_season                      # creates a Printify draft -> Publish to Etsy
+python -m mason_lab shirts options                                   # all templates + palettes (incl. the varsity ones)
 ```
 
 College names and brands are blocked: printing them without a license is trademark infringement.

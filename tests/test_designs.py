@@ -59,3 +59,34 @@ def test_printify_creates_draft_with_matching_colors(tmp_path):
     body = json.loads(next(c for c in http.calls if "products.json" in c[1])[2]["data"])
     assert {v["id"]: v["price"] for v in body["variants"]} == {1: 2999, 3: 3299}
     assert body["print_areas"][0]["placeholders"][0]["images"][0]["id"] == "img1"
+
+
+def test_holiday_collection_renders_and_lists(tmp_path):
+    from mason_lab.retro import holiday_collection
+    designs = holiday_collection("garcia", "2027")
+    assert len(designs) == 11
+    fam = next(d for d in designs if d.name == "family_christmas_red")
+    assert fam.text["top"] == "The Garcia Family" and fam.text["sub"] == "2027" and fam.personalizable
+    for d in designs:
+        check_text(*d.text.values())
+        lst = listing_for(d)
+        assert lst["title"] == d.title[:140] and len(lst["tags"]) == 13
+        assert all(len(t) <= 20 for t in lst["tags"])
+    files = save(next(d for d in designs if d.name == "oh_snap"), tmp_path)
+    img = __import__("PIL.Image", fromlist=["Image"]).open(files["print"])
+    assert img.mode == "RGBA" and img.width <= 3600 and img.info.get("dpi", (0,))[0] > 299
+
+
+def test_setup_wizard_edits_files_in_place(tmp_path, monkeypatch):
+    from mason_lab.setup_wizard import set_config, set_env
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "config.yaml").write_text(
+        "notify:\n  ntfy:     {enabled: true}\ndesigns:\n  printify_shop_id:          # fill in\n"
+        "agents:\n  crypto:\n    bankroll_usd: 500          # money\n")
+    assert set_config("bankroll_usd", "250") and set_config("printify_shop_id", "42")
+    text = (tmp_path / "config.yaml").read_text()
+    assert "    bankroll_usd: 250          # money" in text and "  printify_shop_id: 42          # fill in" in text
+    (tmp_path / ".env").write_text("NTFY_TOPIC=old\nPRINTIFY_TOKEN=\n")
+    set_env("NTFY_TOPIC", "new")
+    set_env("X_BEARER_TOKEN", "t")
+    assert (tmp_path / ".env").read_text() == "NTFY_TOPIC=new\nPRINTIFY_TOKEN=\nX_BEARER_TOKEN=t\n"
