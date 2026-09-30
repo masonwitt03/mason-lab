@@ -69,7 +69,9 @@ Python is the language the program is written in. You install it once, like any 
 
 Open your `mason-lab` folder:
 - **Mac:** double-click **Start-Mac.command**.
-  - If your Mac says it "can't be opened because it's from an unidentified developer": **right-click** the file, choose **Open**, then click **Open** again. You only do this the first time.
+  - If your Mac says it **can't be opened** or "Apple could not verify" it: click **Done** (not "Move to Trash").
+    Then open **System Settings**, click **Privacy & Security**, and scroll down until you see a message about "Start-Mac.command". Click **Open Anyway**, then type your Mac password.
+    Double-click the file again and click **Open**. You only do this the first time.
 - **Windows:** double-click **Start-Windows.bat**.
   - If a blue box says "Windows protected your PC": click **More info**, then **Run anyway**.
 
