@@ -1,13 +1,13 @@
 # Mason Lab
 
-One central controller that runs four agents and pushes their findings to your phone.
+One central controller that runs five agents and pushes their findings to your phone.
 
 ```
                      ┌──────────────── Controller ────────────────┐
                      │ schedules agents · dedupes · daily briefing │
                      └──┬─────────┬──────────┬──────────┬─────────┘
                         │         │          │          │
-                     etsy     clipper     crypto     x_watch
+            vintage · etsy   clipper     crypto     x_watch
                         │         │          │          │
                         └─────────┴────┬─────┴──────────┘
                                  ntfy (phone) · Discord · Telegram
@@ -15,12 +15,33 @@ One central controller that runs four agents and pushes their findings to your p
 
 | Agent | What it does | Default cadence |
 |---|---|---|
-| **etsy** | Scores Etsy niches by demand (favorites/day on top listings) vs competition, drafts listings (title, 13 tags, price) for the best ones, and alerts on demand spikes. Filters out trademark-risk niches. | daily |
+| **vintage** | Your vintage reselling shop (Depop first, eBay/Etsy as extra channels). You log what you buy and sell; it writes listing copy, estimates fees, tracks profit, tells you which pieces need a price cut, and sends a Sunday report on which schools, brands and decades make you the most so you know what to buy. | daily check, weekly report |
+| **etsy** *(off by default)* | Scores Etsy niches by demand (favorites/day on top listings) vs competition, drafts listings (title, 13 tags, price) for the best ones, and alerts on demand spikes. Filters out trademark-risk niches. | daily |
 | **clipper** | Pulls the day's most-viewed Twitch clips from streamers **you're approved to clip**, renders 9:16 with blurred background, uploads to YouTube Shorts and sends to your TikTok drafts, with credit. Also scouts top live streamers on Twitch and Kick. | every 3h |
 | **crypto** | Scans DexScreener (boosted + new tokens) and CoinGecko trending, scores momentum 0–100, lists red flags (thin liquidity, brand-new pair, RugCheck danger...), and gives a position size + stop for your bankroll. | every 5 min |
 | **x_watch** | Watches X accounts you list; when one posts a contract address or `$TICKER`, it alerts with live DEX numbers. | every 2 min |
 
-Why Etsy over Depop: Etsy has an official API for market research, and its best-selling categories (digital downloads, print-on-demand, personalized items) need no inventory. Depop has no public API and is mostly one-off secondhand resale.
+## Vintage reselling (Depop / eBay / Etsy)
+
+Depop has no public API, so you log pieces yourself. Each command takes a few seconds:
+
+```bash
+# bought a shirt: writes the title, Depop description + hashtags, eBay title, Etsy tags and a starting price
+python -m mason_lab vintage add "90s Champion Michigan tee, L, small stain" --cost 4 --p2p 21 --length 28
+
+python -m mason_lab vintage list                 # what's listed, price, days listed
+python -m mason_lab vintage sold 1 32            # sold #1 for $32 on Depop (fees estimated)
+python -m mason_lab vintage sold 2 55 --platform ebay --shipping 5
+python -m mason_lab vintage price 3 29.99        # after a markdown
+python -m mason_lab vintage stats                # profit, ROI, sell-through, best schools/brands/decades
+python -m mason_lab vintage listing 3            # reprint listing copy
+```
+
+It detects school (and adds the mascot, since buyers search both), brand, decade, size, type, events like "national champions", single stitch, and flaws. Anything it misses can be passed as a flag (`--school`, `--decade`, `--size`...). Suggested prices are a starting point; once you've logged sales, the weekly report shows what actually sells.
+
+Resell **authentic** vintage only. Licensed shirts are legal to resell, but printing new shirts with college logos is trademark infringement and gets listings pulled and accounts banned.
+
+The Etsy agent is still included as a second option for print-on-demand or digital products (`agents.etsy.enabled: true`).
 
 ## Setup
 

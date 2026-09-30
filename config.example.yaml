@@ -32,8 +32,18 @@ agents:
     interval_minutes: 2
     accounts: []               # handles you want watched for coin posts, e.g. [someone, someone_else]
 
-  etsy:
+  vintage:
     enabled: true
+    interval_minutes: 1440     # checks once a day
+    stale_days: 21             # suggest a markdown after this many days unsold
+    dead_days: 45              # suggest a bigger cut / bundle / relist
+    markdown_pct: 15
+    report_weekday: 6          # 0=Mon ... 6=Sun
+    min_sales_for_ranking: 2   # a school/brand needs this many sales to be ranked
+    # fees: {depop: [3.3, 0.45], ebay: [13.6, 0.40], etsy: [9.5, 0.45]}   # [percent, fixed $] per sale
+
+  etsy:                        # second option: print-on-demand / digital niche research
+    enabled: false
     interval_minutes: 1440     # once a day
     top_n: 5
     # seed_keywords: [...]     # defaults to a list of proven inventory-free niches
